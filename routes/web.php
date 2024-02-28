@@ -154,6 +154,9 @@ Route::get('/otp', function () {
     return view('otp');
 })->name('otp');
 Route::post('/check-otp', [MailController::class, 'checkOtp'])->name('check-otp');
+Route::get('/resend-otp', [MailController::class, 'resendOtp'])->name('resend-otp');
+
+
 
 // DATATABLES
 Route::get('/datatablesPembelian', [PembelianController::class, 'dataTables'])->middleware('auth');

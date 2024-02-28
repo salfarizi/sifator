@@ -118,6 +118,14 @@
                                     </div>
                                     <button type="submit" class="btn btn-lg btn-primary">Validasi</button>
                                 </form>
+                                <form action="{{ route('send-otp') }}" method="post" class="tooltip-end-bottom mt-3" novalidate>
+                                    @csrf
+                                    <!-- Form fields -->
+                                    <a href="{{ route('resend-otp') }}" id="resend-otp-link" class="btn btn-link"><b>Kirim Ulang Kode OTP</b></a>
+                                    <span id="judulCountdown">Kirim Ulang Kode OTP Dalam</span>
+                                    <span id="countdown"></span>
+                                    <span id="detik">Detik</span>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -171,6 +179,49 @@
         });
 
     </script>
+    <script>
+        var countdownTimer;
+        var countdownDuration = 30; // Durasi countdown dalam detik
+
+        function startCountdown() {
+            var countdownElement = document.getElementById('countdown');
+            var resendLink = document.getElementById('resend-otp-link');
+
+            resendLink.style.display = 'none'; // Sembunyikan tautan kirim ulang
+            countdownElement.innerText = countdownDuration; // Tampilkan durasi awal countdown
+
+            countdownTimer = setInterval(function() {
+                countdownDuration--;
+                countdownElement.innerText = countdownDuration; // Perbarui teks countdown
+
+                if (countdownDuration <= 0) {
+                    document.querySelector("#judulCountdown").innerHTML = ""
+                    document.querySelector("#countdown").innerHTML = ""
+                    document.querySelector("#detik").innerHTML = ""
+                    clearInterval(countdownTimer); // Hentikan countdown jika sudah mencapai 0
+                    resendLink.style.display = 'inline'; // Tampilkan kembali tautan kirim ulang
+                } else if (countdownDuration <= 10) {
+                    countdownElement.style.color = 'red'; // Ubah warna teks countdown menjadi merah
+                }
+            }, 1000); // Perbarui setiap 1 detik
+        }
+
+        // Panggil fungsi countdown saat dokumen dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            startCountdown();
+        });
+
+        // Fungsi untuk memicu permintaan kirim ulang OTP
+        function resendOtp() {
+            // Kode untuk melakukan permintaan kirim ulang OTP, bisa menggunakan AJAX
+            // Contoh:
+            // $.get('/resend-otp', function(response) {
+            //     // Logika untuk menangani respons dari permintaan kirim ulang OTP
+            // });
+        }
+
+    </script>
+
     <!-- Page Specific Scripts End -->
 </body>
 </html>

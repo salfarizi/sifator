@@ -67,4 +67,35 @@ class MailController extends Controller
             return back()->with('error', 'OTP Salah');
         }
     }
+    public function resendOtp(Request $request)
+    {
+        // Retrieve email from session
+        $email = session('email');
+
+        // Check if email exists in session
+        if (!$email) {
+            return back()->with('error', 'Email tidak ditemukan');
+        }
+
+        // Retrieve user by email
+        $user = User::where('email', $email)->first();
+
+        // Check if user exists
+        if (!$user) {
+            return back()->with('error', 'Pengguna tidak ditemukan');
+        }
+
+        // Generate new OTP
+        $otp = rand(100000, 999999);
+
+        // Update the user's OTP
+        $user->update([
+            'otp' => $otp,
+        ]);
+
+        // Resend OTP mail
+        Mail::to($email)->send(new SendOtpMail($otp));
+
+        return back()->with('success', 'Kode OTP telah berhasil dikirim ulang');
+    }
 }
