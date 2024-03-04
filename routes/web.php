@@ -38,8 +38,8 @@ use App\Http\Controllers\MailController;
 // Route::get('/', function () {
 //     return view('index');
 // });
-Route::get('/', [Dashboard::class, 'index'])->middleware('verifyOTP');
-Route::get('/home', [Dashboard::class, 'index'])->name('home')->middleware('verifyOTP');
+Route::get('/', [Dashboard::class, 'index'])->middleware('auth');
+Route::get('/home', [Dashboard::class, 'index'])->middleware('auth')->name('home')->middleware('auth');
 
 Route::resource('/auth', AuthController::class)->middleware('guest');
 Route::get('/auth/create', [AuthController::class, 'register'])->middleware('admin');
