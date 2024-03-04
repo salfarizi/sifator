@@ -38,8 +38,8 @@ use App\Http\Controllers\MailController;
 // Route::get('/', function () {
 //     return view('index');
 // });
-Route::get('/', [Dashboard::class, 'index'])->middleware('auth');
-Route::get('/home', [Dashboard::class, 'index'])->middleware('auth')->name('home')->middleware('auth');
+Route::get('/', [Dashboard::class, 'index'])->middleware('verifyOTP');
+Route::get('/home', [Dashboard::class, 'index'])->name('home')->middleware('verifyOTP');
 
 Route::resource('/auth', AuthController::class)->middleware('guest');
 Route::get('/auth/create', [AuthController::class, 'register'])->middleware('admin');
@@ -152,7 +152,7 @@ Route::get('/changeRoles', [UserController::class, 'change_roles'])->middleware(
 Route::post('/send-otp', [MailController::class, 'sendOtp'])->name('send-otp');
 Route::get('/otp', function () {
     return view('otp');
-})->name('otp');
+})->name('otp')->middleware('auth');
 Route::post('/check-otp', [MailController::class, 'checkOtp'])->name('check-otp');
 Route::get('/resend-otp', [MailController::class, 'resendOtp'])->name('resend-otp');
 

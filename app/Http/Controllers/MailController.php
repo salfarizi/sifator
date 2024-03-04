@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 
 class MailController extends Controller
 {
+    // Perbarui Controller
     public function sendOtp(Request $request)
     {
         $credentials = $request->validate([
@@ -43,8 +44,8 @@ class MailController extends Controller
                 // Regenerate session
                 $request->session()->regenerate();
 
-                // Redirect to intended page
-                return redirect()->intended('otp');
+                // Redirect to OTP page
+                return redirect()->route('otp');
             } else {
                 // Handle the case where $user is not an instance of User
                 return back()->with('error', 'Email atau Password Salah.');
