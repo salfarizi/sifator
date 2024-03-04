@@ -152,7 +152,7 @@ Route::get('/changeRoles', [UserController::class, 'change_roles'])->middleware(
 Route::post('/send-otp', [MailController::class, 'sendOtp'])->name('send-otp');
 Route::get('/otp', function () {
     return view('otp');
-})->name('otp')->middleware('auth');
+})->name('otp')->middleware('guest');
 Route::post('/check-otp', [MailController::class, 'checkOtp'])->name('check-otp');
 Route::get('/resend-otp', [MailController::class, 'resendOtp'])->name('resend-otp');
 

@@ -10,10 +10,9 @@ use Illuminate\Support\Facades\Mail;
 
 class MailController extends Controller
 {
-    // Perbarui Controller
     public function sendOtp(Request $request)
     {
-        $credentials = $request->validate([
+        $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ], [
@@ -21,15 +20,9 @@ class MailController extends Controller
             'email.email' => 'Email harus valid',
             'password.required' => 'Password tidak boleh kosong',
         ]);
-
-        // Attempt to authenticate the user
-        if (Auth::attempt($credentials)) {
-            // Retrieve the authenticated user
-            $user = Auth::user();
-
-            // Ensure $user is an instance of the User model
-            if ($user instanceof User) {
-                // Generate OTP
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            if (password_verify($request->password, $user->password)) {
                 $otp = rand(100000, 999999);
 
                 // Update the user's OTP
@@ -39,21 +32,19 @@ class MailController extends Controller
 
                 // Send OTP mail
                 Mail::to($request->email)->send(new SendOtpMail($otp));
-                session(['email' => $request->email]);
-
-                // Regenerate session
-                $request->session()->regenerate();
-
-                // Redirect to OTP page
-                return redirect()->route('otp');
+                session([
+                    'email' => $request->email,
+                    'password' => $request->password
+                ]);
+                return redirect('otp');
             } else {
-                // Handle the case where $user is not an instance of User
-                return back()->with('error', 'Email atau Password Salah.');
+                // Authentication failed
+                return back()->with('error', 'Email atau Password Salah');
             }
+        } else {
+            // Authentication failed
+            return back()->with('error', 'Email atau Password Salah');
         }
-
-        // Authentication failed
-        return back()->with('error', 'Email atau Password Salah');
     }
 
     public function checkOtp(Request $request)
@@ -63,8 +54,22 @@ class MailController extends Controller
             $user->update([
                 'otp' => '-',
             ]);
-            return redirect()->route('home')->with('success', 'Login Berhasil');
+            $data = [
+                'email' => session('email'),
+                'password' => session('password'),
+            ];
+            if (Auth::attempt($data)) {
+                // Retrieve the authenticated user
+
+
+                // Regenerate session
+                $request->session()->regenerate();
+
+                // Redirect to intended page
+                return redirect()->intended('/home')->with('success', 'Login Berhasil');
+            }
         } else {
+            // Handle the case where $user is not an instance of User
             return back()->with('error', 'OTP Salah');
         }
     }
