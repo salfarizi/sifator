@@ -28,6 +28,7 @@ class MailController extends Controller
                 // Update the user's OTP
                 $user->update([
                     'otp' => $otp,
+                    'updated_at' => now(), // Update waktu terakhir
                 ]);
 
                 // Send OTP mail
@@ -50,7 +51,8 @@ class MailController extends Controller
     public function checkOtp(Request $request)
     {
         $user = User::where('otp', $request->otp)->where('email', session('email'))->first();
-        if ($user) {
+        $expireTime = now()->subMinutes(1); // Mengatur batas waktu kedaluwarsa 1 menit
+        if ($user && $user->otp == $request->otp && $user->email == session('email') && $user->updated_at->gt($expireTime)) {
             $user->update([
                 'otp' => '-',
             ]);
@@ -70,7 +72,7 @@ class MailController extends Controller
             }
         } else {
             // Handle the case where $user is not an instance of User
-            return back()->with('error', 'OTP Salah');
+            return back()->with('error', 'OTP Kadaluwarsa atau Salah');
         }
     }
     public function resendOtp(Request $request)

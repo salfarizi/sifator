@@ -122,7 +122,7 @@
                                     @csrf
                                     <!-- Form fields -->
                                     <a href="{{ route('resend-otp') }}" id="resend-otp-link" class="btn btn-link"><b>Kirim Ulang Kode OTP</b></a>
-                                    <span id="judulCountdown">Kirim Ulang Kode OTP Dalam</span>
+                                    <span id="judulCountdown">Kode OTP Expire Dalam</span>
                                     <span id="countdown"></span>
                                     <span id="detik">Detik</span>
                                 </form>
@@ -181,7 +181,7 @@
     </script>
     <script>
         var countdownTimer;
-        var countdownDuration = 30; // Durasi countdown dalam detik
+        var countdownDuration = 60; // Durasi countdown dalam detik
 
         function startCountdown() {
             var countdownElement = document.getElementById('countdown');
